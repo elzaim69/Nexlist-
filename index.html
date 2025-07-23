@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexlist V2</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="note-container">
+    <h1>📝 Nexlist</h1>
+    <textarea id="main-note" placeholder="Schreib hier deine Gedanken, Aufgaben, Rechnungen..."></textarea>
+    <div class="controls">
+      <button onclick="saveNote()">💾 Speichern</button>
+      <button onclick="clearNote()">🗑️ Löschen</button>
+      <input type="text" id="calc-input" placeholder="z.B. 5*4+2" />
+      <button onclick="calculate()">=</button>
+      <span id="calc-result"></span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
