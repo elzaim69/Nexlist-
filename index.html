@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexlist Keep</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <h1>🧠 Nexlist Keep</h1>
+    <div class="input-area">
+      <input id="note-title" type="text" placeholder="Titel eingeben..." />
+      <textarea id="note-text" placeholder="Notiz schreiben..."></textarea>
+      <div class="tools">
+        <input id="calc-input" type="text" placeholder="Rechnung z.B. 12*3+1" />
+        <button onclick="calculate()">=</button>
+        <span id="calc-result"></span>
+        <button onclick="addNote()">💾 Speichern</button>
+      </div>
+    </div>
+    <div id="notes-grid" class="grid"></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
