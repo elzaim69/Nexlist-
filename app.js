@@ -3,12 +3,12 @@ let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
 function renderNotes() {
   const grid = document.getElementById("notes-grid");
   grid.innerHTML = "";
-  notes.forEach((note, i) => {
+  notes.forEach((note, index) => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <button class="delete-btn" onclick="deleteNote(${i})">×</button>
-      <button class="edit-btn" onclick="editNote(${i})">✎</button>
+      <button class="delete-btn" onclick="deleteNote(${index})">×</button>
+      <button class="edit-btn" onclick="editNote(${index})">✎</button>
       <h3>${note.title}</h3>
       <p>${note.text}</p>
     `;
@@ -21,10 +21,10 @@ function addNote() {
   const text = document.getElementById("note-text").value.trim();
   if (!title && !text) return;
 
-  const newNote = { title, text };
-  notes.unshift(newNote); // NEUE Notiz wird oben hinzugefügt
+  const note = { title, text };
+  notes.unshift(note); // Neue Karte oben hinzufügen
   localStorage.setItem("nexlist-final", JSON.stringify(notes));
-  renderNotes();
+  renderNotes(); // Jetzt wird die neue Kachel auch angezeigt
 
   // Felder leeren
   document.getElementById("note-title").value = "";
@@ -43,7 +43,7 @@ function editNote(index) {
   const note = notes[index];
   document.getElementById("note-title").value = note.title;
   document.getElementById("note-text").value = note.text;
-  deleteNote(index);
+  deleteNote(index); // Entfernt alte Version, um sie neu zu speichern
 }
 
 function calculate() {
@@ -56,4 +56,4 @@ function calculate() {
   }
 }
 
-renderNotes();
+renderNotes(); // Beim Laden der Seite direkt anzeigen
