@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f0f0;
+}
+.app-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #333;
+}
+.input-area {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+.input-area input[type="text"],
+.input-area textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: none;
+}
+.input-area textarea {
+  height: 100px;
+}
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.tools button {
+  background: #ffc107;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.tools button:hover {
+  background: #e0a800;
+}
+#calc-input {
+  flex: 1;
+}
+#calc-result {
+  font-weight: bold;
+}
+.grid {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.card {
+  background: #fff8dc;
+  padding: 15px;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  white-space: pre-wrap;
+}
+.card h3 {
+  margin-top: 0;
+}
+.delete-btn, .edit-btn {
+  position: absolute;
+  top: 8px;
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+.delete-btn {
+  right: 10px;
+  color: red;
+}
+.edit-btn {
+  right: 35px;
+  color: #007bff;
+}
