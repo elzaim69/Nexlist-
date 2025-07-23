@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🗓️ Daily Control</h1>
+
+    <section class="todo-section">
+      <h2>📌 To-do-Liste</h2>
+      <input type="text" id="todo-input" placeholder="Neue Aufgabe..." />
+      <button onclick="addTodo()">Hinzufügen</button>
+      <ul id="todo-list"></ul>
+    </section>
+
+    <section class="notes-section">
+      <h2>📝 Notizen</h2>
+      <textarea id="notes" placeholder="Schreib deine Gedanken hier auf..."></textarea>
+    </section>
+
+    <section class="calculator-section">
+      <h2>🧮 Taschenrechner</h2>
+      <input type="text" id="calc-input" placeholder="z.B. 4+3*2" />
+      <button onclick="calculate()">=</button>
+      <p id="calc-result"></p>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
