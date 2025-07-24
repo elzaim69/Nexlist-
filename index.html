@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="transition-colors duration-300">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,18 +8,19 @@
   <script defer>
     let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
     let lastDeleted = null;
+    let darkMode = false;
 
     function renderNotes(data = notes) {
       const grid = document.getElementById("notes");
       grid.innerHTML = "";
       data.forEach((note, index) => {
         const card = document.createElement("div");
-        card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 transition-all duration-300";
+        card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white transition-all duration-300";
         card.innerHTML = `
           <button class="absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="deleteNote(${index})">×</button>
           <button class="absolute top-2 left-2 text-blue-500 hover:text-blue-700" onclick="editNote(${index})">✎</button>
           <h3 class="font-semibold text-lg mb-1">${note.title}</h3>
-          <p class="text-sm text-gray-700 whitespace-pre-line">${note.text}</p>
+          <p class="text-sm whitespace-pre-line">${note.text}</p>
           <p class="text-xs text-gray-400 mt-2">🕒 ${note.date || "Unbekanntes Datum"}</p>
         `;
         grid.appendChild(card);
@@ -93,14 +94,35 @@
       renderNotes(filtered);
     }
 
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle("dark");
+      darkMode = !darkMode;
+    }
+
+    function exportNotes() {
+      const data = JSON.stringify(notes, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nexlist-export.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     window.onload = () => renderNotes();
   </script>
 </head>
-<body class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-xl bg-white shadow-lg rounded-xl p-6">
-    <h1 class="text-2xl font-bold mb-4 text-center">📋 Nexlist</h1>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-xl bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+    <h1 class="text-2xl font-bold mb-4 text-center">Nexlist</h1>
 
     <div class="space-y-4">
+      <div class="flex justify-between">
+        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">🌙/☀️</button>
+        <button onclick="exportNotes()" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">📤 Exportieren</button>
+      </div>
+
       <input id="note-title" type="text" maxlength="100" placeholder="Titel eingeben..." class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <textarea id="note-text" placeholder="Notiz schreiben..." rows="5" maxlength="500" oninput="this.nextElementSibling.textContent = this.value.length + '/500'" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
       <p class="text-xs text-right text-gray-500">0/500</p>
@@ -111,7 +133,7 @@
         <span id="calc-result" class="col-span-4 text-center text-sm text-gray-700"></span>
       </div>
 
-      <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">📂 Speichern</button>
+      <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">📁 Speichern</button>
 
       <input id="search-input" type="text" placeholder="🔍 Notizen durchsuchen..." oninput="searchNotes()" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
     </div>
