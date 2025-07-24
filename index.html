@@ -7,18 +7,20 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script defer>
     let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
+    let lastDeleted = null;
 
-    function renderNotes() {
+    function renderNotes(data = notes) {
       const grid = document.getElementById("notes");
       grid.innerHTML = "";
-      notes.forEach((note, index) => {
+      data.forEach((note, index) => {
         const card = document.createElement("div");
-        card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50";
+        card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 transition-all duration-300";
         card.innerHTML = `
           <button class="absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="deleteNote(${index})">×</button>
           <button class="absolute top-2 left-2 text-blue-500 hover:text-blue-700" onclick="editNote(${index})">✎</button>
           <h3 class="font-semibold text-lg mb-1">${note.title}</h3>
           <p class="text-sm text-gray-700 whitespace-pre-line">${note.text}</p>
+          <p class="text-xs text-gray-400 mt-2">🕒 ${note.date || "Unbekanntes Datum"}</p>
         `;
         grid.appendChild(card);
       });
@@ -29,7 +31,8 @@
       const text = document.getElementById("note-text").value.trim();
       if (!title && !text) return;
 
-      const note = { title, text };
+      const now = new Date().toLocaleString();
+      const note = { title, text, date: now };
       notes.unshift(note);
       localStorage.setItem("nexlist-final", JSON.stringify(notes));
       renderNotes();
@@ -41,9 +44,28 @@
     }
 
     function deleteNote(index) {
+      lastDeleted = notes[index];
       notes.splice(index, 1);
       localStorage.setItem("nexlist-final", JSON.stringify(notes));
       renderNotes();
+      showUndo();
+    }
+
+    function showUndo() {
+      const snackbar = document.createElement("div");
+      snackbar.className = "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-2 rounded shadow z-50";
+      snackbar.innerHTML = `Notiz gelöscht <button onclick="undoDelete()" class="underline ml-2">Rückgängig</button>`;
+      document.body.appendChild(snackbar);
+      setTimeout(() => snackbar.remove(), 5000);
+    }
+
+    function undoDelete() {
+      if (lastDeleted) {
+        notes.unshift(lastDeleted);
+        localStorage.setItem("nexlist-final", JSON.stringify(notes));
+        renderNotes();
+        lastDeleted = null;
+      }
     }
 
     function editNote(index) {
@@ -68,22 +90,10 @@
       const filtered = notes.filter(note =>
         note.title.toLowerCase().includes(term) || note.text.toLowerCase().includes(term)
       );
-      const grid = document.getElementById("notes");
-      grid.innerHTML = "";
-      filtered.forEach((note, index) => {
-        const card = document.createElement("div");
-        card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50";
-        card.innerHTML = `
-          <button class="absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="deleteNote(${index})">×</button>
-          <button class="absolute top-2 left-2 text-blue-500 hover:text-blue-700" onclick="editNote(${index})">✎</button>
-          <h3 class="font-semibold text-lg mb-1">${note.title}</h3>
-          <p class="text-sm text-gray-700 whitespace-pre-line">${note.text}</p>
-        `;
-        grid.appendChild(card);
-      });
+      renderNotes(filtered);
     }
 
-    window.onload = renderNotes;
+    window.onload = () => renderNotes();
   </script>
 </head>
 <body class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center p-4">
@@ -91,13 +101,14 @@
     <h1 class="text-2xl font-bold mb-4 text-center">🧠 Nexlist</h1>
 
     <div class="space-y-4">
-      <input id="note-title" type="text" placeholder="Titel eingeben..." class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <textarea id="note-text" placeholder="Notiz schreiben..." rows="5" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      <input id="note-title" type="text" maxlength="100" placeholder="Titel eingeben..." class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <textarea id="note-text" placeholder="Notiz schreiben..." rows="5" maxlength="500" oninput="this.nextElementSibling.textContent = this.value.length + '/500'" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      <p class="text-xs text-right text-gray-500">0/500</p>
 
-      <div class="flex gap-2 items-center">
-        <input id="calc-input" type="text" placeholder="Rechnung z.B. 12*3+1" class="flex-grow border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <button onclick="calculate()" class="bg-blue-500 hover:bg-blue-600 text-white rounded px-4 py-2">=</button>
-        <span id="calc-result" class="min-w-[50px] text-sm text-gray-700"></span>
+      <div class="grid grid-cols-4 gap-2" id="calculator">
+        <input id="calc-input" type="text" placeholder="12*3+1" class="col-span-3 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <button onclick="calculate()" class="bg-blue-500 hover:bg-blue-600 text-white rounded px-2 py-1">=</button>
+        <span id="calc-result" class="col-span-4 text-center text-sm text-gray-700"></span>
       </div>
 
       <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">💾 Speichern</button>
