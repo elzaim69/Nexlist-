@@ -45,7 +45,7 @@
     function addNote() {
       const titleEl = document.getElementById("note-title");
       const textEl = document.getElementById("note-text");
-      const reminderTime = document.getElementById("reminder-time").value;
+      const reminderDate = document.getElementById("reminder-datetime").value;
       const title = titleEl.value.trim();
       const text = textEl.value.trim();
       if (!title && !text) return;
@@ -60,12 +60,13 @@
       textEl.value = "";
       document.getElementById("calc-display").textContent = "";
 
-      // Erinnerung setzen, wenn Zeit vorhanden ist
-      if (reminderTime) {
-        const timeMs = parseInt(reminderTime);
-        setTimeout(() => {
-          alert(`⏰ Erinnerung: ${title || 'Unbenannte Notiz'}`);
-        }, timeMs);
+      if (reminderDate) {
+        const reminderTime = new Date(reminderDate).getTime() - Date.now();
+        if (reminderTime > 0) {
+          setTimeout(() => {
+            alert(`⏰ Erinnerung: ${title || 'Unbenannte Notiz'}`);
+          }, reminderTime);
+        }
       }
     }
 
@@ -173,7 +174,7 @@
       <textarea id="note-text" placeholder="Notiz schreiben..." rows="5" maxlength="500" oninput="this.nextElementSibling.textContent = this.value.length + '/500'" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
       <p class="text-xs text-right text-gray-500">0/500</p>
 
-      <input id="reminder-time" type="number" placeholder="⏰ Erinnerung in ms (z. B. 5000)" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2" />
+      <input id="reminder-datetime" type="datetime-local" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2" />
       <button onclick="summarizeNote()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded px-4 py-2">🧠 Zusammenfassen</button>
 
       <div class="bg-gray-100 dark:bg-gray-700 rounded p-4 shadow grid grid-cols-4 gap-2 w-64 mx-auto text-center">
