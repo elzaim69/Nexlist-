@@ -10,20 +10,6 @@
       darkMode: 'class'
     }
   </script>
-  <style>
-    .theme-blue {
-      --tw-bg-opacity: 1;
-      background-color: rgba(59, 130, 246, var(--tw-bg-opacity));
-    }
-    .theme-green {
-      --tw-bg-opacity: 1;
-      background-color: rgba(34, 197, 94, var(--tw-bg-opacity));
-    }
-    .theme-purple {
-      --tw-bg-opacity: 1;
-      background-color: rgba(168, 85, 247, var(--tw-bg-opacity));
-    }
-  </style>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer>
     let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
@@ -147,27 +133,17 @@
       doc.save("nexlist-export.pdf");
     }
 
-    function setTheme(color) {
-      const root = document.querySelector(".theme-wrapper");
-      root.className = `theme-wrapper ${color}`;
-    }
-
     window.onload = () => renderNotes();
   </script>
 </head>
-<body class="theme-wrapper bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
   <div class="w-full max-w-xl bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
     <h1 class="text-2xl font-bold mb-4 text-center">Nexlist</h1>
 
     <div class="space-y-4">
       <div class="flex justify-between gap-2 flex-wrap">
-        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">◎●</button>
-        <button onclick="exportNotes()" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">📤 Exportieren</button>
-        <div class="flex gap-1">
-          <button onclick="setTheme('theme-blue')" class="bg-blue-500 w-6 h-6 rounded-full"></button>
-          <button onclick="setTheme('theme-green')" class="bg-green-500 w-6 h-6 rounded-full"></button>
-          <button onclick="setTheme('theme-purple')" class="bg-purple-500 w-6 h-6 rounded-full"></button>
-        </div>
+        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">◎◉</button>
+        <button onclick="exportNotes()" class="text-sm bg-blue-500 hover:bg-blue-500 text-white px-2 py-1 rounded">⬆️ Exportieren</button>
       </div>
 
       <input id="note-title" type="text" maxlength="100" placeholder="Titel eingeben..." class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
