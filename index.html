@@ -4,11 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexlist Redesign</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Tailwind mit darkMode: 'class' support -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
   <script defer>
     let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
     let lastDeleted = null;
-    let darkMode = false;
 
     function renderNotes(data = notes) {
       const grid = document.getElementById("notes");
@@ -96,7 +101,6 @@
 
     function toggleDarkMode() {
       document.documentElement.classList.toggle("dark");
-      darkMode = !darkMode;
     }
 
     function exportNotes() {
@@ -130,7 +134,7 @@
       <div class="grid grid-cols-4 gap-2" id="calculator">
         <input id="calc-input" type="text" placeholder="12*3+1" class="col-span-3 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
         <button onclick="calculate()" class="bg-blue-500 hover:bg-blue-600 text-white rounded px-2 py-1">=</button>
-        <span id="calc-result" class="col-span-4 text-center text-sm text-gray-700"></span>
+        <span id="calc-result" class="col-span-4 text-center text-sm text-gray-700 dark:text-gray-300"></span>
       </div>
 
       <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">📁 Speichern</button>
