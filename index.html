@@ -32,11 +32,21 @@
       data.forEach((note, index) => {
         const card = document.createElement("div");
         card.className = "relative border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white transition-all duration-300";
+        let checklistHTML = "";
+        if (note.checklist) {
+          checklistHTML = `<ul class='list-disc pl-4 mt-2'>${note.checklist.map(item => `<li class='${item.done ? 'line-through text-gray-400' : ''}'>${item.text}</li>`).join('')}</ul>`;
+        }
+        let tagsHTML = "";
+        if (note.tags) {
+          tagsHTML = `<div class='mt-2 flex gap-2'>${note.tags.map(tag => `<span class='text-xs px-2 py-1 rounded bg-blue-200 text-blue-800 dark:bg-blue-700 dark:text-white'>${tag}</span>`).join('')}</div>`;
+        }
         card.innerHTML = `
           <button class="absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="deleteNote(${index})">×</button>
           <button class="absolute top-2 left-2 text-blue-500 hover:text-blue-700" onclick="editNote(${index})">✎</button>
           <h3 class="font-semibold text-lg mb-1">${note.title}</h3>
           <p class="text-sm whitespace-pre-line">${note.text}</p>
+          ${checklistHTML}
+          ${tagsHTML}
           <p class="text-xs text-gray-400 mt-2">🕒 ${note.date || "Unbekanntes Datum"}</p>
         `;
         grid.appendChild(card);
@@ -48,19 +58,25 @@
     function addNote() {
       const titleEl = document.getElementById("note-title");
       const textEl = document.getElementById("note-text");
+      const tagEl = document.getElementById("note-tags");
+      const checklistEl = document.getElementById("note-checklist");
       const reminderDate = document.getElementById("reminder-datetime").value;
       const title = titleEl.value.trim();
       const text = textEl.value.trim();
-      if (!title && !text) return;
+      const tags = tagEl.value.split(',').map(t => t.trim()).filter(Boolean);
+      const checklist = checklistEl.value.split('\n').map(t => ({ text: t.trim(), done: false })).filter(t => t.text);
+      if (!title && !text && !tags.length && !checklist.length) return;
 
       const now = new Date().toLocaleString();
-      const note = { title, text, date: now };
+      const note = { title, text, date: now, tags, checklist };
       notes.unshift(note);
       localStorage.setItem("nexlist-final", JSON.stringify(notes));
       renderNotes();
 
       titleEl.value = "";
       textEl.value = "";
+      tagEl.value = "";
+      checklistEl.value = "";
       document.getElementById("calc-display").textContent = "";
 
       if (reminderDate) {
@@ -119,6 +135,8 @@
       const note = notes[index];
       document.getElementById("note-title").value = note.title;
       document.getElementById("note-text").value = note.text;
+      document.getElementById("note-tags").value = note.tags?.join(', ') || "";
+      document.getElementById("note-checklist").value = note.checklist?.map(c => c.text).join('\n') || "";
       deleteNote(index);
     }
 
@@ -151,6 +169,10 @@
         y += 6;
         doc.text(`Text: ${note.text}`, 10, y);
         y += 6;
+        if (note.tags?.length) doc.text(`Tags: ${note.tags.join(', ')}`, 10, y);
+        y += 6;
+        if (note.checklist?.length) doc.text(`Aufgaben: ${note.checklist.map(c => c.text).join(', ')}`, 10, y);
+        y += 6;
         doc.text(`Datum: ${note.date}`, 10, y);
         y += 10;
         if (y > 270) {
@@ -178,8 +200,9 @@
       </div>
 
       <input id="note-title" type="text" maxlength="100" placeholder="Titel eingeben..." class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <textarea id="note-text" placeholder="Notiz schreiben..." rows="5" maxlength="500" oninput="this.nextElementSibling.textContent = this.value.length + '/500'" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-      <p class="text-xs text-right text-gray-500">0/500</p>
+      <textarea id="note-text" placeholder="Notiz schreiben..." rows="3" maxlength="500" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2"></textarea>
+      <textarea id="note-checklist" placeholder="Aufgaben (je eine Zeile)" rows="3" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2"></textarea>
+      <input id="note-tags" type="text" placeholder="Kategorien / Tags (durch Kommas getrennt)" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2">
 
       <input id="reminder-datetime" type="datetime-local" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2" />
 
