@@ -13,6 +13,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer>
     let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
+    let reminders = JSON.parse(localStorage.getItem("nexlist-reminders")) || [];
     let lastDeleted = null;
 
     if (localStorage.getItem("nexlist-dark") === "true") {
@@ -40,6 +41,8 @@
         `;
         grid.appendChild(card);
       });
+
+      renderReminderList();
     }
 
     function addNote() {
@@ -61,13 +64,30 @@
       document.getElementById("calc-display").textContent = "";
 
       if (reminderDate) {
-        const reminderTime = new Date(reminderDate).getTime() - Date.now();
-        if (reminderTime > 0) {
-          setTimeout(() => {
-            alert(`⏰ Erinnerung: ${title || 'Unbenannte Notiz'}`);
-          }, reminderTime);
-        }
+        const reminder = {
+          title: title || 'Unbenannte Notiz',
+          time: new Date(reminderDate).getTime(),
+          display: reminderDate
+        };
+        reminders.push(reminder);
+        localStorage.setItem("nexlist-reminders", JSON.stringify(reminders));
+        setReminder(reminder);
+        renderReminderList();
       }
+    }
+
+    function setReminder(reminder) {
+      const delay = reminder.time - Date.now();
+      if (delay > 0) {
+        setTimeout(() => {
+          alert(`⏰ Erinnerung: ${reminder.title}`);
+        }, delay);
+      }
+    }
+
+    function renderReminderList() {
+      const list = document.getElementById("reminder-list");
+      list.innerHTML = reminders.map(r => `🔔 ${r.title} – ${r.display}`).join("<br>");
     }
 
     function deleteNote(index) {
@@ -149,15 +169,10 @@
       doc.save("nexlist-export.pdf");
     }
 
-    async function summarizeNote() {
-      const text = document.getElementById("note-text").value;
-      if (!text.trim()) return alert("Bitte gib zuerst einen Notiztext ein.");
-
-      const summary = text.length > 100 ? text.slice(0, 100) + "..." : text;
-      alert("🧠 Zusammenfassung (Demo): " + summary);
+    window.onload = () => {
+      renderNotes();
+      reminders.forEach(setReminder);
     }
-
-    window.onload = () => renderNotes();
   </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
@@ -175,7 +190,6 @@
       <p class="text-xs text-right text-gray-500">0/500</p>
 
       <input id="reminder-datetime" type="datetime-local" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2" />
-      <button onclick="summarizeNote()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded px-4 py-2">🧠 Zusammenfassen</button>
 
       <div class="bg-gray-100 dark:bg-gray-700 rounded p-4 shadow grid grid-cols-4 gap-2 w-64 mx-auto text-center">
         <div id="calc-display" class="col-span-4 bg-white dark:bg-gray-800 text-black dark:text-white rounded p-2 h-10 text-right overflow-x-auto"></div>
@@ -201,6 +215,8 @@
       <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">📁 Speichern</button>
 
       <input id="search-input" type="text" placeholder="🔍 Notizen durchsuchen..." oninput="searchNotes()" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+
+      <div id="reminder-list" class="text-sm text-gray-500 dark:text-gray-300"></div>
     </div>
 
     <div id="notes" class="mt-6 space-y-4"></div>
