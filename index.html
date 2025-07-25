@@ -12,7 +12,6 @@
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    // Dark Mode beim Laden prüfen
     if (localStorage.getItem("nexlist-dark") === "true") {
       document.documentElement.classList.add("dark");
     }
@@ -22,6 +21,52 @@
       const isDark = document.documentElement.classList.contains("dark");
       localStorage.setItem("nexlist-dark", isDark);
     }
+
+    let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
+
+    function renderNotes() {
+      const grid = document.getElementById("notes");
+      grid.innerHTML = "";
+      notes.forEach((note, index) => {
+        const card = document.createElement("div");
+        card.className = "p-4 rounded shadow bg-gray-50 dark:bg-gray-700";
+        const checklistHtml = note.checklist ? '<ul class="list-disc list-inside text-sm">' + note.checklist.map(item => `<li>${item}</li>`).join('') + '</ul>' : '';
+        const tagsHtml = note.tags ? '<div class="mt-2 flex flex-wrap gap-1">' + note.tags.map(tag => `<span class="text-xs bg-blue-200 dark:bg-blue-500 text-blue-900 dark:text-white px-2 py-0.5 rounded">${tag}</span>`).join('') + '</div>' : '';
+        card.innerHTML = `
+          <h3 class="font-bold">${note.title}</h3>
+          <p class="text-sm">${note.text}</p>
+          ${checklistHtml}
+          ${tagsHtml}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function addNote() {
+      const title = document.getElementById("note-title").value.trim();
+      const text = document.getElementById("note-text").value.trim();
+      const checklistRaw = document.getElementById("note-checklist").value.trim();
+      const tagsRaw = document.getElementById("note-tags").value.trim();
+
+      if (!title && !text && !checklistRaw) return;
+
+      const note = {
+        title,
+        text,
+        checklist: checklistRaw ? checklistRaw.split("\n") : [],
+        tags: tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
+      };
+      notes.unshift(note);
+      localStorage.setItem("nexlist-final", JSON.stringify(notes));
+      renderNotes();
+
+      document.getElementById("note-title").value = "";
+      document.getElementById("note-text").value = "";
+      document.getElementById("note-checklist").value = "";
+      document.getElementById("note-tags").value = "";
+    }
+
+    renderNotes();
   </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
@@ -30,10 +75,8 @@
 
     <div class="space-y-4">
       <div class="flex justify-between gap-2 flex-wrap items-center">
-        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">☀︎ ☾</button>
-
+        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">🌙/☀️</button>
         <button onclick="addNote()" class="text-sm bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-3 py-1">📁 Speichern</button>
-
         <button onclick="exportNotes()" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">📤 Exportieren</button>
       </div>
 
@@ -41,8 +84,6 @@
       <textarea id="note-text" placeholder="Notiz schreiben..." rows="3" maxlength="500" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2"></textarea>
       <textarea id="note-checklist" placeholder="Aufgaben (je eine Zeile)" rows="3" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2"></textarea>
       <input id="note-tags" type="text" placeholder="Kategorien / Tags (durch Kommas getrennt)" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2">
-
-      <input id="reminder-datetime" type="datetime-local" class="w-full border border-gray-300 dark:bg-gray-700 dark:text-white rounded px-4 py-2" />
 
       <div class="bg-gray-100 dark:bg-gray-700 rounded p-4 shadow grid grid-cols-4 gap-2 w-64 mx-auto text-center">
         <div id="calc-display" class="col-span-4 bg-white dark:bg-gray-800 text-black dark:text-white rounded p-2 h-10 text-right overflow-x-auto"></div>
@@ -64,8 +105,6 @@
         <button onclick="insertCalc('+')">+</button>
         <button class="col-span-4 bg-red-500 text-white rounded py-1" onclick="backspaceCalc()">←</button>
       </div>
-
-      <div id="reminder-list" class="text-sm text-gray-500 dark:text-gray-300"></div>
     </div>
 
     <div id="notes" class="mt-6 space-y-4"></div>
