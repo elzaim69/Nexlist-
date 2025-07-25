@@ -142,14 +142,6 @@
       }
     }
 
-    function searchNotes() {
-      const term = document.getElementById("search-input").value.toLowerCase();
-      const filtered = notes.filter(note =>
-        note.title.toLowerCase().includes(term) || note.text.toLowerCase().includes(term)
-      );
-      renderNotes(filtered);
-    }
-
     function exportNotes() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -213,8 +205,6 @@
       </div>
 
       <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-4 py-2">📁 Speichern</button>
-
-      <input id="search-input" type="text" placeholder="🔍 Notizen durchsuchen..." oninput="searchNotes()" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
 
       <div id="reminder-list" class="text-sm text-gray-500 dark:text-gray-300"></div>
     </div>
