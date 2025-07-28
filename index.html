@@ -65,8 +65,7 @@
       const note = {
         title,
         text,
-        checklist: checklistRaw ? checklistRaw.split("
-") : [],
+        checklist: checklistRaw ? checklistRaw.split("\n") : [],
         tags: tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
       };
 
@@ -92,18 +91,33 @@
       }
     }
 
-    renderNotes();
-
-  
-}
-
-      document.getElementById("note-title").value = "";
-      document.getElementById("note-text").value = "";
-      document.getElementById("note-checklist").value = "";
-      document.getElementById("note-tags").value = "";
+    function insertCalc(val) {
+      document.getElementById("calc-display").innerText += val;
     }
 
-    renderNotes();
+    function backspaceCalc() {
+      const disp = document.getElementById("calc-display");
+      disp.innerText = disp.innerText.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        const result = eval(document.getElementById("calc-display").innerText);
+        document.getElementById("calc-display").innerText = result;
+      } catch {
+        document.getElementById("calc-display").innerText = "Error";
+      }
+    }
+
+    function exportNotes() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(notes));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", "nexlist-export.json");
+      dlAnchorElem.click();
+    }
+
+    window.onload = renderNotes;
   </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
