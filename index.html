@@ -4,25 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexlist Redesign</title>
-  <script src="https://cdn.tailwindcss.com">function deleteNote(index) {
-  const card = document.querySelector(`[data-index='${index}']`);
-  if (card) {
-    card.style.opacity = "0";
-    setTimeout(() => {
-      notes.splice(index, 1);
-      localStorage.setItem("nexlist-final", JSON.stringify(notes));
-      renderNotes();
-    }, 400);
-  }
-}
-</script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class'
     }
-  </script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
+
     if (localStorage.getItem("nexlist-dark") === "true") {
       document.documentElement.classList.add("dark");
     }
@@ -34,12 +21,12 @@
     }
 
     let rawNotes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
-let notes = rawNotes.map(n => ({
-  title: n.title || "",
-  text: n.text || "",
-  checklist: Array.isArray(n.checklist) ? n.checklist : [],
-  tags: Array.isArray(n.tags) ? n.tags : []
-}));
+    let notes = rawNotes.map(n => ({
+      title: n.title || "",
+      text: n.text || "",
+      checklist: Array.isArray(n.checklist) ? n.checklist : [],
+      tags: Array.isArray(n.tags) ? n.tags : []
+    }));
 
     function renderNotes() {
       const grid = document.getElementById("notes");
@@ -47,8 +34,8 @@ let notes = rawNotes.map(n => ({
       notes.forEach((note, index) => {
         const card = document.createElement("div");
         card.className = "p-4 rounded shadow bg-gray-50 dark:bg-gray-700";
-        const checklistHtml = note.checklist ? '<ul class="list-disc list-inside text-sm">' + note.checklist.map(item => `<li>${item}</li>`).join('') + '</ul>' : '';
-        const tagsHtml = note.tags ? '<div class="mt-2 flex flex-wrap gap-1">' + note.tags.map(tag => `<span class="text-xs bg-blue-200 dark:bg-blue-500 text-blue-900 dark:text-white px-2 py-0.5 rounded">${tag}</span>`).join('') + '</div>' : '';
+        const checklistHtml = note.checklist.length ? '<ul class="list-disc list-inside text-sm">' + note.checklist.map(item => `<li>${item}</li>`).join('') + '</ul>' : '';
+        const tagsHtml = note.tags.length ? '<div class="mt-2 flex flex-wrap gap-1">' + note.tags.map(tag => `<span class="text-xs bg-blue-200 dark:bg-blue-500 text-blue-900 dark:text-white px-2 py-0.5 rounded">${tag}</span>`).join('') + '</div>' : '';
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <div>
@@ -68,24 +55,44 @@ let notes = rawNotes.map(n => ({
     }
 
     function addNote() {
-  const title = document.getElementById("note-title").value.trim();
-  const text = document.getElementById("note-text").value.trim();
-  const checklistRaw = document.getElementById("note-checklist").value.trim();
-  const tagsRaw = document.getElementById("note-tags").value.trim();
+      const title = document.getElementById("note-title").value.trim();
+      const text = document.getElementById("note-text").value.trim();
+      const checklistRaw = document.getElementById("note-checklist").value.trim();
+      const tagsRaw = document.getElementById("note-tags").value.trim();
 
-  if (!title && !text && !checklistRaw) return;
+      if (!title && !text && !checklistRaw) return;
 
-  const note = {
-    title,
-    text,
-    checklist: checklistRaw ? checklistRaw.split("
+      const note = {
+        title,
+        text,
+        checklist: checklistRaw ? checklistRaw.split("
 ") : [],
-    tags: tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
-  };
+        tags: tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
+      };
 
-  notes.unshift(note);
-  localStorage.setItem("nexlist-final", JSON.stringify(notes));
-  renderNotes();
+      notes.unshift(note);
+      localStorage.setItem("nexlist-final", JSON.stringify(notes));
+      renderNotes();
+
+      document.getElementById("note-title").value = "";
+      document.getElementById("note-text").value = "";
+      document.getElementById("note-checklist").value = "";
+      document.getElementById("note-tags").value = "";
+    }
+
+    function deleteNote(index) {
+      const card = document.querySelector(`[data-index='${index}']`);
+      if (card) {
+        card.style.opacity = "0";
+        setTimeout(() => {
+          notes.splice(index, 1);
+          localStorage.setItem("nexlist-final", JSON.stringify(notes));
+          renderNotes();
+        }, 400);
+      }
+    }
+
+    renderNotes();
 
   
 }
