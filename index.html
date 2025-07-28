@@ -54,11 +54,6 @@ let notes = rawNotes.map(n => ({
         card.setAttribute("data-index", index);
         grid.appendChild(card);
       });
-        card.style.transition = "opacity 0.4s ease";
-        card.style.opacity = "1";
-        card.setAttribute("data-index", index);
-        grid.appendChild(card);
-      });
     }
 
     function addNote() {
@@ -77,41 +72,9 @@ let notes = rawNotes.map(n => ({
       };
       notes.unshift(note);
       localStorage.setItem("nexlist-final", JSON.stringify(notes));
-      // renderNotes() wird bereits korrekt aufgerufen
+      renderNotes();
 
-    function deleteNote(index) {
-      const grid = document.getElementById("notes");
-      const card = grid.querySelector(`[data-index='${index}']`);
-      if (card) {
-        card.style.opacity = "0";
-        setTimeout(() => {
-          notes.splice(index, 1);
-          localStorage.setItem("nexlist-final", JSON.stringify(notes));
-          // renderNotes() wird bereits korrekt aufgerufen
-        }, 400);
-      } else {
-        notes.splice(index, 1);
-        localStorage.setItem("nexlist-final", JSON.stringify(notes));
-        // renderNotes() wird bereits korrekt aufgerufen
-      }
-    }
-
-    function deleteNote(index) {
-      const grid = document.getElementById("notes");
-      const card = grid.querySelector(`[data-index='${index}']`);
-      if (card) {
-        card.style.opacity = "0";
-        setTimeout(() => {
-          notes.splice(index, 1);
-          localStorage.setItem("nexlist-final", JSON.stringify(notes));
-          // renderNotes() wird bereits korrekt aufgerufen
-        }, 400);
-      } else {
-        notes.splice(index, 1);
-        localStorage.setItem("nexlist-final", JSON.stringify(notes));
-        // renderNotes() wird bereits korrekt aufgerufen
-      }
-    }
+        }
 
       document.getElementById("note-title").value = "";
       document.getElementById("note-text").value = "";
@@ -128,7 +91,7 @@ let notes = rawNotes.map(n => ({
 
     <div class="space-y-4">
       <div class="flex justify-between gap-2 flex-wrap items-center">
-        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">☀︎☾</button>
+        <button onclick="toggleDarkMode()" class="text-sm bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded">☀︎ ☾</button>
         <button onclick="addNote()" class="text-sm bg-green-500 hover:bg-green-600 text-white font-semibold rounded px-3 py-1">📁 Speichern</button>
         <button onclick="exportNotes()" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">📤 Exportieren</button>
       </div>
