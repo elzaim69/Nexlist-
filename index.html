@@ -22,22 +22,18 @@
       localStorage.setItem("nexlist-dark", isDark);
     }
 
-    let notes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
+    let rawNotes = JSON.parse(localStorage.getItem("nexlist-final")) || [];
+let notes = rawNotes.map(n => ({
+  title: n.title || "",
+  text: n.text || "",
+  checklist: Array.isArray(n.checklist) ? n.checklist : [],
+  tags: Array.isArray(n.tags) ? n.tags : []
+}));
 
-    function renderNotes() {
-      const grid = document.getElementById("notes");
-      grid.innerHTML = "";
-      notes.forEach((note, index) => {
-        const card = document.createElement("div");
-        card.className = "p-4 rounded shadow bg-gray-50 dark:bg-gray-700";
-        const checklistHtml = note.checklist ? '<ul class="list-disc list-inside text-sm">' + note.checklist.map(item => `<li>${item}</li>`).join('') + '</ul>' : '';
-        const tagsHtml = note.tags ? '<div class="mt-2 flex flex-wrap gap-1">' + note.tags.map(tag => `<span class="text-xs bg-blue-200 dark:bg-blue-500 text-blue-900 dark:text-white px-2 py-0.5 rounded">${tag}</span>`).join('') + '</div>' : '';
-        card.innerHTML = `
-          <h3 class="font-bold">${note.title}</h3>
-          <p class="text-sm">${note.text}</p>
-          ${checklistHtml}
-          ${tagsHtml}
-        `;
+    function renderNotes() {$1
+        card.style.transition = "opacity 0.4s ease";
+        card.style.opacity = "1";
+        card.setAttribute("data-index", index);
         grid.appendChild(card);
       });
     }
@@ -59,6 +55,23 @@
       notes.unshift(note);
       localStorage.setItem("nexlist-final", JSON.stringify(notes));
       renderNotes();
+
+    function deleteNote(index) {
+      const grid = document.getElementById("notes");
+      const card = grid.querySelector(`[data-index='${index}']`);
+      if (card) {
+        card.style.opacity = "0";
+        setTimeout(() => {
+          notes.splice(index, 1);
+          localStorage.setItem("nexlist-final", JSON.stringify(notes));
+          renderNotes();
+        }, 400);
+      } else {
+        notes.splice(index, 1);
+        localStorage.setItem("nexlist-final", JSON.stringify(notes));
+        renderNotes();
+      }
+    }
 
       document.getElementById("note-title").value = "";
       document.getElementById("note-text").value = "";
